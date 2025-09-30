@@ -379,6 +379,7 @@ document.write(`
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#porcentaje-de-variables-con-datos-faltantes">Porcentaje de variables con datos faltantes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calcular-porcentaje-de-informalidad-por-area">Calcular porcentaje de informalidad por AREA</a></li>
 </ul>
             </nav>
         </div>
@@ -402,6 +403,8 @@ document.write(`
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">skew</span><span class="p">,</span> <span class="n">kurtosis</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">unidecode</span>
 </pre></div>
 </div>
 </div>
@@ -514,7 +517,446 @@ La vivienda ocupada por este hogar es                     0.498202
 </div>
 </div>
 </div>
-<p>Las variables categóricas cuyo porcentaje de valores nulos fue cercano a cero, fueron imputadas por su moda y la función polyreg (Polynomial Regression) del software R. Por su parte, las variables númericas fueron imputadas por su mediana o por la función “norm.predict” (imputación por regresión). A continuación se muestra el encabezado de este conjunto de datos sin la presencia de datos nulos.</p>
+<p>Las variables categóricas cuyo porcentaje de valores nulos fue cercano a cero, fueron imputadas por su moda y la función polyreg (Polynomial Regression) del software R. Por su parte, las variables númericas fueron imputadas por su mediana o por la función “norm.predict” (imputación por regresión). A continuación se muestra el encabezado de este conjunto de datos sin la presencia de datos nulos.
+Obteniendo así un nuevo conjunto de datos.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">datos2</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;/Users/macbook/Downloads/data_filtrada_imputada.csv&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">mapeo_formalidad</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;Informal&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;Formal&#39;</span><span class="p">}</span>
+<span class="n">datos3</span> <span class="o">=</span> <span class="n">datos2</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> 
+<span class="n">datos3</span><span class="p">[</span><span class="s1">&#39;formalidad&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datos3</span><span class="p">[</span><span class="s1">&#39;formalidad&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">mapeo_formalidad</span><span class="p">)</span>
+
+<span class="n">df_formalidad</span> <span class="o">=</span> <span class="n">datos3</span><span class="p">[</span><span class="s1">&#39;formalidad&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+<span class="n">df_formalidad</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;formalidad&#39;</span><span class="p">,</span> <span class="s1">&#39;n&#39;</span><span class="p">]</span>
+<span class="n">colores</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Informal&#39;</span><span class="p">:</span> <span class="s1">&#39;#F8766D&#39;</span><span class="p">,</span> <span class="s1">&#39;Formal&#39;</span><span class="p">:</span> <span class="s1">&#39;#00BFC4&#39;</span><span class="p">}</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">df_formalidad</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;formalidad&#39;</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s1">&#39;n&#39;</span><span class="p">,</span>
+
+    <span class="n">palette</span><span class="o">=</span><span class="n">colores</span><span class="p">,</span>
+    <span class="n">width</span><span class="o">=</span><span class="mf">0.6</span>
+<span class="p">)</span>
+
+<span class="c1"># Añadir etiquetas de texto</span>
+<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">ax</span><span class="o">.</span><span class="n">patches</span><span class="p">:</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">get_height</span><span class="p">())</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span>
+                <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">get_x</span><span class="p">()</span> <span class="o">+</span> <span class="n">p</span><span class="o">.</span><span class="n">get_width</span><span class="p">()</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">get_height</span><span class="p">()),</span>
+                <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+                <span class="n">va</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+                <span class="n">xytext</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+                <span class="n">textcoords</span><span class="o">=</span><span class="s1">&#39;offset points&#39;</span><span class="p">,</span>
+                <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+
+<span class="c1"># Personalización</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Distribución de la Formalidad Laboral&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Tipo de empleo&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Número de personas&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+
+<span class="c1"># Ajustar el límite del eje Y</span>
+<span class="n">max_n</span> <span class="o">=</span> <span class="n">df_formalidad</span><span class="p">[</span><span class="s1">&#39;n&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_n</span> <span class="o">*</span> <span class="mf">1.1</span><span class="p">)</span>
+
+<span class="n">sns</span><span class="o">.</span><span class="n">despine</span><span class="p">(</span><span class="n">left</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Applications/miniconda3/envs/ml_venve/lib/python3.10/site-packages/seaborn/_oldcore.py:1498: FutureWarning: is_categorical_dtype is deprecated and will be removed in a future version. Use isinstance(dtype, CategoricalDtype) instead
+  if pd.api.types.is_categorical_dtype(vector):
+/Applications/miniconda3/envs/ml_venve/lib/python3.10/site-packages/seaborn/_oldcore.py:1498: FutureWarning: is_categorical_dtype is deprecated and will be removed in a future version. Use isinstance(dtype, CategoricalDtype) instead
+  if pd.api.types.is_categorical_dtype(vector):
+/Applications/miniconda3/envs/ml_venve/lib/python3.10/site-packages/seaborn/_oldcore.py:1498: FutureWarning: is_categorical_dtype is deprecated and will be removed in a future version. Use isinstance(dtype, CategoricalDtype) instead
+  if pd.api.types.is_categorical_dtype(vector):
+</pre></div>
+</div>
+<img alt="_images/0ea8e61af5aba70e53ca4a6a02a18288cb08868a4dcffe06e214c028d9778896.png" src="_images/0ea8e61af5aba70e53ca4a6a02a18288cb08868a4dcffe06e214c028d9778896.png" />
+</div>
+</div>
+<p>La población ocupada se dedica principalmente a actividades informales como se observa en la anterior gráfica. Se afirma a partir de estos resultados que un 55,9% de los ocupados en Colombia fueron informales, mientras que un 44,1% de los trabajadores gozaban de protección social.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">datos2</span><span class="p">[</span><span class="s1">&#39;formalidad&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">(</span><span class="n">datos2</span><span class="p">[</span><span class="s1">&#39;formalidad&#39;</span><span class="p">],</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;coerce&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="calcular-porcentaje-de-informalidad-por-area">
+<h2>Calcular porcentaje de informalidad por AREA<a class="headerlink" href="#calcular-porcentaje-de-informalidad-por-area" title="Link to this heading">#</a></h2>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">df_informal_area</span> <span class="o">=</span> <span class="n">datos2</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;AREA&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">agg</span><span class="p">(</span>
+    <span class="n">total</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;formalidad&#39;</span><span class="p">,</span> <span class="s1">&#39;size&#39;</span><span class="p">),</span>  
+    <span class="n">informales</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;formalidad&#39;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>  
+<span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+
+<span class="n">df_informal_area</span><span class="p">[</span><span class="s1">&#39;porcentaje_informal&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">df_informal_area</span><span class="p">[</span><span class="s1">&#39;informales&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">df_informal_area</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">])</span> <span class="o">*</span> <span class="mi">100</span>
+
+
+<span class="n">df_informal_area</span> <span class="o">=</span> <span class="n">df_informal_area</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span>
+    <span class="n">by</span><span class="o">=</span><span class="s1">&#39;porcentaje_informal&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">df_informal_area</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>          AREA  total  informales  porcentaje_informal
+19   Sincelejo  13290        9146            68.818661
+17    Riohacha  11223        7677            68.404170
+6    Cúcuta AM  15531       10275            66.158007
+21  Valledupar  12086        7952            65.795135
+11    Montería  12907        8280            64.151236
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+
+<span class="n">order_area</span> <span class="o">=</span> <span class="n">df_informal_area</span><span class="p">[</span><span class="s1">&#39;AREA&#39;</span><span class="p">]</span>
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">barplot</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">df_informal_area</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;AREA&#39;</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s1">&#39;porcentaje_informal&#39;</span><span class="p">,</span>
+    <span class="n">order</span><span class="o">=</span><span class="n">order_area</span><span class="p">,</span>  
+    <span class="n">color</span><span class="o">=</span><span class="s1">&#39;#F8766D&#39;</span>  
+<span class="p">)</span>
+
+
+<span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">ax</span><span class="o">.</span><span class="n">patches</span><span class="p">:</span>
+    <span class="n">height</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">get_height</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">annotate</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">height</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">%&#39;</span><span class="p">,</span>
+        <span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">get_x</span><span class="p">()</span> <span class="o">+</span> <span class="n">p</span><span class="o">.</span><span class="n">get_width</span><span class="p">()</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">,</span> <span class="n">height</span><span class="p">),</span>
+        <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;center&#39;</span><span class="p">,</span>
+        <span class="n">va</span><span class="o">=</span><span class="s1">&#39;bottom&#39;</span><span class="p">,</span>
+        <span class="n">xytext</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>  
+        <span class="n">textcoords</span><span class="o">=</span><span class="s1">&#39;offset points&#39;</span><span class="p">,</span>
+        <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span>
+    <span class="p">)</span>
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Distribución del Porcentaje de Informalidad por Área&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Área&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Porcentaje de Informales&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span>  
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span> 
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Applications/miniconda3/envs/ml_venve/lib/python3.10/site-packages/seaborn/_oldcore.py:1498: FutureWarning: is_categorical_dtype is deprecated and will be removed in a future version. Use isinstance(dtype, CategoricalDtype) instead
+  if pd.api.types.is_categorical_dtype(vector):
+/Applications/miniconda3/envs/ml_venve/lib/python3.10/site-packages/seaborn/_oldcore.py:1498: FutureWarning: is_categorical_dtype is deprecated and will be removed in a future version. Use isinstance(dtype, CategoricalDtype) instead
+  if pd.api.types.is_categorical_dtype(vector):
+</pre></div>
+</div>
+<img alt="_images/bd11e347d11f660ba4c65c856f60c2930d3bd644b6c8e1bdaf5c1d97056e4e76.png" src="_images/bd11e347d11f660ba4c65c856f60c2930d3bd644b6c8e1bdaf5c1d97056e4e76.png" />
+</div>
+</div>
+<p>Dentro de las ciudades que reportaron las más altas tasas de informalidad se encuentran Sincelejo (68,8%), Riohacha (68,4%) y Cúcuta (66,2%). Mientra que las ciudades con menores tasas de informalidad (y por consiguiente quienes tiene mayor proporción de trabajadores formalizados) fueron Medellín (43,6%), Bogotá (43,1%) y Manizales (41,9%)</p>
+<p>En la siguiente tabla se muestra el resumen estadístico de las variables cuantitativas que caracterizaron a la probación ocupada en Colombia en el 2024. En esta tabla se puede observar, por ejemplo, que el promedio de edad de las personas ocupadas en Colombia es 41.71 años con una desviación estándar de 14.09 años. El tiempo promedio de meses que estuvo sin empleo una persona entre su trabajo actual y el anterior es de aproximadamente 4 meses con una desviación estándar de 11 meses. Por otro lado el tiempo medio que una persona tarde en desplazarse hasta su lugar de trabajo es de 24 minutos con una desviación estándar de 21 minutos.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">datos_df</span> <span class="o">=</span> <span class="n">datos2</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+
+<span class="n">excluir</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;FEX_C18&quot;</span><span class="p">,</span> <span class="s2">&quot;MES&quot;</span><span class="p">,</span> <span class="s2">&quot;formalidad&quot;</span><span class="p">]</span>
+
+
+<span class="n">num_vars</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">col</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">datos_df</span><span class="o">.</span><span class="n">columns</span>
+    <span class="k">if</span> <span class="n">datos_df</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;int64&#39;</span><span class="p">,</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span> <span class="s1">&#39;int32&#39;</span><span class="p">,</span> <span class="s1">&#39;float32&#39;</span><span class="p">]</span>
+    <span class="ow">and</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">excluir</span>
+<span class="p">]</span>
+
+
+<span class="n">tablas_por_variable</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">num_vars</span><span class="p">:</span>
+    <span class="n">variable</span> <span class="o">=</span> <span class="n">datos_df</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
+
+    
+    <span class="n">resumen</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;Variable&#39;</span><span class="p">:</span> <span class="n">var</span><span class="p">,</span>
+        <span class="s1">&#39;Media&#39;</span><span class="p">:</span> <span class="n">variable</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span>
+        <span class="s1">&#39;Desviación_Estándar&#39;</span><span class="p">:</span> <span class="n">variable</span><span class="o">.</span><span class="n">std</span><span class="p">(),</span>
+        <span class="s1">&#39;Mediana&#39;</span><span class="p">:</span> <span class="n">variable</span><span class="o">.</span><span class="n">median</span><span class="p">()</span>
+    <span class="p">}</span>
+    
+   
+    <span class="n">tablas_por_variable</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">resumen</span><span class="p">]))</span>
+
+<span class="k">for</span> <span class="n">tabla</span> <span class="ow">in</span> <span class="n">tablas_por_variable</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">tabla</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span> 
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">----------------------------------------</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Variable     Media  Desviación_Estándar  Mediana
+    Edad 41.719248            14.099505     40.0
+
+----------------------------------------
+
+                                                                  Variable     Media  Desviación_Estándar  Mediana
+¿Cuánto tiempo lleva en esta empresa trabajando de forma continua (meses)? 83.861103           111.720294     36.0
+
+----------------------------------------
+
+                                                         Variable    Media  Desviación_Estándar  Mediana
+Meses que estuvo sin empleo entre su trabajo actual y el anterior 4.024367            11.058771      1.0
+
+----------------------------------------
+
+                                          Variable     Media  Desviación_Estándar  Mediana
+Tiempo de desplazamiento hasta su sitio de trabajo 23.744973            21.983194     20.0
+
+----------------------------------------
+
+          Variable        Media  Desviación_Estándar   Mediana
+Ingresos laborales 1.653886e+06         2.262285e+06 1300000.0
+
+----------------------------------------
+
+                        Variable    Media  Desviación_Estándar  Mediana
+Número de hogares en la vivienda 1.017228             0.165985      1.0
+
+----------------------------------------
+
+         Variable    Media  Desviación_Estándar  Mediana
+Número de cuartos 3.398123             1.132351      3.0
+
+----------------------------------------
+
+                     Variable    Media  Desviación_Estándar  Mediana
+Total de personas en el hogar 3.407674             1.712066      3.0
+
+----------------------------------------
+</pre></div>
+</div>
+</div>
+</div>
+<p>En la anterior tabla se muestra el resumen estadístico de las variables cuantitativas que caracterizaron a la probación ocupada en Colombia en el 2024. En esta tabla se puede observar, por ejemplo, que el promedio de edad de las personas ocupadas en Colombia es 41.71 años con una desviación estándar de 14.09 años. El tiempo promedio de meses que estuvo sin empleo una persona entre su trabajo actual y el anterior es de aproximadamente 4 meses con una desviación estándar de 11 meses. Por otro lado el tiempo medio que una persona tarde en desplazarse hasta su lugar de trabajo es de 24 minutos con una desviación estándar de 21 minutos.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">variables_clave_original</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Edad&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Ingresos laborales&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;¿Cuánto tiempo lleva en esta empresa trabajando de forma continua (meses)?&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Meses que estuvo sin empleo entre su trabajo actual y el anterior&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Tiempo de desplazamiento hasta su sitio de trabajo&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Número de cuartos&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Número de hogares en la vivienda&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Total de personas en el hogar&quot;</span>
+<span class="p">]</span>
+
+
+<span class="n">variables_clave</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">variables_clave_original</span><span class="p">)</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="n">datos2</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+
+
+
+
+<span class="n">resultados</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Variable&#39;</span><span class="p">,</span> <span class="s1">&#39;Skewness&#39;</span><span class="p">,</span> <span class="s1">&#39;Kurtosis&#39;</span><span class="p">])</span>
+
+
+<span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">variables_clave</span><span class="p">:</span>
+    
+    <span class="n">x</span> <span class="o">=</span> <span class="n">datos2</span><span class="p">[</span><span class="n">var</span><span class="p">]</span>
+    <span class="n">skew_val</span> <span class="o">=</span> <span class="n">skew</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">nan_policy</span><span class="o">=</span><span class="s1">&#39;omit&#39;</span><span class="p">)</span>
+    <span class="n">kurt_val</span> <span class="o">=</span> <span class="n">kurtosis</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">nan_policy</span><span class="o">=</span><span class="s1">&#39;omit&#39;</span><span class="p">)</span> 
+
+    
+    <span class="n">skew_rounded</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">skew_val</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">kurt_rounded</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">kurt_val</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+
+    
+    <span class="n">nueva_fila</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([{</span><span class="s1">&#39;Variable&#39;</span><span class="p">:</span> <span class="n">var</span><span class="p">,</span> <span class="s1">&#39;Skewness&#39;</span><span class="p">:</span> <span class="n">skew_rounded</span><span class="p">,</span> <span class="s1">&#39;Kurtosis&#39;</span><span class="p">:</span> <span class="n">kurt_rounded</span><span class="p">}])</span>
+    <span class="n">resultados</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">resultados</span><span class="p">,</span> <span class="n">nueva_fila</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+
+
+<span class="nb">print</span><span class="p">(</span><span class="n">resultados</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                                                                  Variable  Skewness  Kurtosis
+                                                         Número de cuartos      9.89    767.62
+                                                        Ingresos laborales     13.51    396.79
+                                          Número de hogares en la vivienda     12.52    203.78
+                                                                      Edad      0.36     -0.63
+                        Tiempo de desplazamiento hasta su sitio de trabajo      4.33     34.05
+                                             Total de personas en el hogar      1.31      4.37
+¿Cuánto tiempo lleva en esta empresa trabajando de forma continua (meses)?      2.07      4.55
+         Meses que estuvo sin empleo entre su trabajo actual y el anterior      5.63     37.82
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/var/folders/83/zn8x0yz50rd407m55phbdf5h0000gp/T/ipykernel_21630/727567848.py:33: FutureWarning: The behavior of DataFrame concatenation with empty or all-NA entries is deprecated. In a future version, this will no longer exclude empty or all-NA columns when determining the result dtypes. To retain the old behavior, exclude the relevant entries before the concat operation.
+  resultados = pd.concat([resultados, nueva_fila], ignore_index=True)
+</pre></div>
+</div>
+</div>
+</div>
+<p>Pruebas estadísticas de normalidad como Shapiro-Wilk o Kolmogorov-Smirnov pueden ser no adecuadas dado el tamaño de la muestra del presente trabajo. En este caso se utiliza una medida descriptiva como los contrastes de asimetría y curtosis que, según Álvarez et al. (2006) ayudan a determinar si la forma de la distribución de las observaciones muestrales se aleja significativamente de la de un modelo normal en cuanto a su simetría y curtosis. Si una variable aleatoria sigue una distribución normal, ambos coeficientes son nulos (0). Con base en los resultado mostrados en la tabla anterior, Edad parecería ser la única variable que podría seguir una distribución normal.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">titulo_original</span> <span class="o">=</span> <span class="s2">&quot;Distribución de la edad de los trabajadores por tipo de empleo&quot;</span>
+<span class="n">titulo</span> <span class="o">=</span> <span class="n">unidecode</span><span class="o">.</span><span class="n">unidecode</span><span class="p">(</span><span class="n">titulo_original</span><span class="p">)</span> 
+
+
+<span class="n">mapeo_formalidad</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;Informal&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;Formal&#39;</span><span class="p">}</span>
+<span class="n">datos2</span><span class="p">[</span><span class="s1">&#39;formalidad_etiqueta&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datos2</span><span class="p">[</span><span class="s1">&#39;formalidad&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">mapeo_formalidad</span><span class="p">)</span>
+
+<span class="n">colores</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;#F8766D&#39;</span><span class="p">,</span> <span class="s1">&#39;#00BFC4&#39;</span><span class="p">]</span>
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">datos2</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;formalidad_etiqueta&#39;</span><span class="p">,</span>
+    <span class="n">y</span><span class="o">=</span><span class="s1">&#39;Edad&#39;</span><span class="p">,</span>
+    <span class="n">palette</span><span class="o">=</span><span class="n">colores</span><span class="p">,</span>
+    <span class="n">order</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Informal&#39;</span><span class="p">,</span> <span class="s1">&#39;Formal&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">titulo</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Formalidad&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Edad&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+
+
+<span class="n">sns</span><span class="o">.</span><span class="n">despine</span><span class="p">(</span><span class="n">trim</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Applications/miniconda3/envs/ml_venve/lib/python3.10/site-packages/seaborn/_oldcore.py:1498: FutureWarning: is_categorical_dtype is deprecated and will be removed in a future version. Use isinstance(dtype, CategoricalDtype) instead
+  if pd.api.types.is_categorical_dtype(vector):
+/Applications/miniconda3/envs/ml_venve/lib/python3.10/site-packages/seaborn/_oldcore.py:1498: FutureWarning: is_categorical_dtype is deprecated and will be removed in a future version. Use isinstance(dtype, CategoricalDtype) instead
+  if pd.api.types.is_categorical_dtype(vector):
+</pre></div>
+</div>
+<img alt="_images/1c8c3fe2793a038425cdb50d863650f2173bb6a80a455745e1157a34829ec18a.png" src="_images/1c8c3fe2793a038425cdb50d863650f2173bb6a80a455745e1157a34829ec18a.png" />
+</div>
+</div>
+<p>Al analizar, por ejemplo, la edad del ocupado en función de si es formal o informal se ha encontrado que existe mayor variabilidad en la edad dentro del grupo de informales en comparación con los formales. No existen grandes diferencias entre la edad mediana de ambos grupos, y se evidencia presencia de outliers en ambas categorías con mayor cantidad dentro de los formales.</p>
+<p>Para afirmar con certeza si existen diferencias entre la edad de los trabajadores de ambos grupos se aplica la prueba no paramétrica de Mann-Whitney-Wilcoxon. Entonces, se tiene que: H0: No hay diferencia en la distribución de la edad en trabajadores formales e informales. H1 Existen diferencias en la distribución de la edad en trabajadores formales e informales.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">mannwhitneyu</span>
+
+<span class="n">edad_informal</span> <span class="o">=</span> <span class="n">datos3</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">datos3</span><span class="p">[</span><span class="s1">&#39;formalidad&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Informal&#39;</span><span class="p">,</span> <span class="s1">&#39;Edad&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>
+<span class="n">edad_formal</span> <span class="o">=</span> <span class="n">datos3</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">datos3</span><span class="p">[</span><span class="s1">&#39;formalidad&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Formal&#39;</span><span class="p">,</span> <span class="s1">&#39;Edad&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">values</span>
+
+
+<span class="n">statistic</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">mannwhitneyu</span><span class="p">(</span>
+    <span class="n">edad_informal</span><span class="p">,</span>
+    <span class="n">edad_formal</span><span class="p">,</span>
+    <span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;two-sided&#39;</span>
+<span class="p">)</span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.05</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Resultado de la Prueba de Mann-Whitney U (Edad por Formalidad)&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Estadístico U: </span><span class="si">{</span><span class="n">statistic</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Valor p: </span><span class="si">{</span><span class="n">p_value</span><span class="si">:</span><span class="s2">.6f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">p_value</span> <span class="o">&lt;</span> <span class="n">alpha</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Conclusión: Se rechaza la hipótesis nula (p &lt; 0.05).&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Existe una diferencia estadísticamente significativa en la distribución de la Edad entre los trabajadores formales e informales.&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Conclusión: No se rechaza la hipótesis nula (p &gt; 0.05).&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No hay evidencia suficiente para afirmar una diferencia significativa en la distribución de la Edad.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Resultado de la Prueba de Mann-Whitney U (Edad por Formalidad)
+--------------------------------------------------
+Estadístico U: 16709072715.0000
+Valor p: 0.000000
+
+Conclusión: Se rechaza la hipótesis nula (p &lt; 0.05).
+Existe una diferencia estadísticamente significativa en la distribución de la Edad entre los trabajadores formales e informales.
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">titulo_original</span> <span class="o">=</span> <span class="s2">&quot;Distribución del tiempo de dezplazamiento (minutos) del ocupado hacia su lugar de trabajo por tipo de empleo&quot;</span>
+
+<span class="n">titulo</span> <span class="o">=</span> <span class="n">unidecode</span><span class="o">.</span><span class="n">unidecode</span><span class="p">(</span><span class="n">titulo_original</span><span class="p">)</span> 
+
+
+<span class="n">columna_tiempo</span> <span class="o">=</span> <span class="s2">&quot;Tiempo de desplazamiento hasta su sitio de trabajo&quot;</span>
+
+<span class="n">mapeo_formalidad</span> <span class="o">=</span> <span class="p">{</span><span class="mi">0</span><span class="p">:</span> <span class="s1">&#39;Informal&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s1">&#39;Formal&#39;</span><span class="p">}</span>
+<span class="n">datos3</span><span class="p">[</span><span class="s1">&#39;formalidad_etiqueta&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">datos3</span><span class="p">[</span><span class="s1">&#39;formalidad&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">mapeo_formalidad</span><span class="p">)</span>
+
+<span class="n">colores</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;#F8766D&#39;</span><span class="p">,</span> <span class="s1">&#39;#00BFC4&#39;</span><span class="p">]</span>
+
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+
+
+<span class="n">ax</span> <span class="o">=</span> <span class="n">sns</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span>
+    <span class="n">data</span><span class="o">=</span><span class="n">datos3</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="s1">&#39;formalidad_etiqueta&#39;</span><span class="p">,</span>
+    
+    <span class="n">y</span><span class="o">=</span><span class="n">columna_tiempo</span><span class="p">,</span> 
+    <span class="n">palette</span><span class="o">=</span><span class="n">colores</span><span class="p">,</span>
+   
+    <span class="n">order</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Informal&#39;</span><span class="p">,</span> <span class="s1">&#39;Formal&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+
+
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">titulo</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Formalidad&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Tiempo de desplazamiento al trabajo&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+
+
+<span class="n">sns</span><span class="o">.</span><span class="n">despine</span><span class="p">(</span><span class="n">trim</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">left</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bottom</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Applications/miniconda3/envs/ml_venve/lib/python3.10/site-packages/seaborn/_oldcore.py:1498: FutureWarning: is_categorical_dtype is deprecated and will be removed in a future version. Use isinstance(dtype, CategoricalDtype) instead
+  if pd.api.types.is_categorical_dtype(vector):
+</pre></div>
+</div>
+<img alt="_images/09c0c169385aa8b88c195928829a7d159d1a4475315fc8d01d438f9fa8142614.png" src="_images/09c0c169385aa8b88c195928829a7d159d1a4475315fc8d01d438f9fa8142614.png" />
+</div>
+</div>
 </section>
 </section>
 
@@ -574,6 +1016,7 @@ La vivienda ocupada por este hogar es                     0.498202
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#porcentaje-de-variables-con-datos-faltantes">Porcentaje de variables con datos faltantes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calcular-porcentaje-de-informalidad-por-area">Calcular porcentaje de informalidad por AREA</a></li>
 </ul>
   </nav></div>
 
