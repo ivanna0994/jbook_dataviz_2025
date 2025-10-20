@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Objetivos &#8212; My sample book</title>
+    <title>Conclusiones y recomendaciones &#8212; My sample book</title>
   
   
   
@@ -60,6 +60,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'capitulo5';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Modelo de regresión logística" href="capitulo4.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -122,8 +123,6 @@
       
       
       
-        
-      
       <div class="bd-sidebar-primary bd-sidebar">
         
 
@@ -179,11 +178,19 @@
                 </a>
             </li>
         </ul>
-        <ul class="nav bd-sidenav">
+        <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="capitulo1.html">Objetivos</a></li>
 
 <li class="toctree-l1"><a class="reference internal" href="capitulo3.html">Metodología</a></li>
 <li class="toctree-l1"><a class="reference internal" href="capitulo2.html">Análisis Exploratorio</a></li>
+<li class="toctree-l1"><a class="reference internal" href="capitulo4.html">Modelo de regresión logística</a></li>
+
+
+
+
+
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Conclusiones y recomendaciones</a></li>
+
 </ul>
 
     </div>
@@ -369,7 +376,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Objetivos</h1>
+    <h1>Conclusiones y recomendaciones</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -379,9 +386,9 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Objetivos</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#objetivo-general">Objetivo General</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#objetivos-especificos">Objetivos Específicos</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Conclusiones y recomendaciones</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusiones">Conclusiones</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recomendaciones">Recomendaciones</a></li>
 </ul>
 </li>
 </ul>
@@ -396,23 +403,26 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="objetivos">
-<h1>Objetivos<a class="headerlink" href="#objetivos" title="Link to this heading">#</a></h1>
+  <section id="conclusiones-y-recomendaciones">
+<h1>Conclusiones y recomendaciones<a class="headerlink" href="#conclusiones-y-recomendaciones" title="Link to this heading">#</a></h1>
 </section>
-<section id="objetivo-general">
-<h1>Objetivo General<a class="headerlink" href="#objetivo-general" title="Link to this heading">#</a></h1>
-<p>Estimar la probabilidad de obtener un empleo formal en Colombia durante el año 2024,
-mediante la aplicación de un modelo de regresión logística binaria basado en los datos de la
-GEIH.</p>
-<section id="objetivos-especificos">
-<h2>Objetivos Específicos<a class="headerlink" href="#objetivos-especificos" title="Link to this heading">#</a></h2>
+<section id="conclusiones">
+<h1>Conclusiones<a class="headerlink" href="#conclusiones" title="Link to this heading">#</a></h1>
 <ol class="arabic simple">
-<li><p>Realizar un análisis exploratorio de los datos de la GEIH 2024, incluyendo estadísticas
-descriptivas y visualización de variables relevantes para el estudio del empleo.</p></li>
-<li><p>Aplicar y Evaluar el desempeño del modelo de regresión logística binaria para estimar
-la probabilidad de ocupación laboral en la formalidad.</p></li>
-<li><p>Identificar e interpretar los factores sociodemográficos y económicos más influyentes en
-la probabilidad de estar ocupado formalmente en Colombia.</p></li>
+<li><p>Las métricas del modelo permiten concluir que las variables independientes que fueron incluidas influyen significativamente en las probabilidades de que un individuo tenga un empleo formal. El ejercicio fue últil para dar respaldo a intuiciones comunes que la sociedad tiene, como por ejemplo, que ser mujer representa de entrada una desventaja a la hora de obtener empleos formales. Por el contrario, ser hombre, vivir en zonas urbanas de Medellín o Manizales, estar casado y tener posgrado aumentan considera blemente las posibilidades de ingresar en el lado formal del mercado de trabajo.</p></li>
+<li><p>Muchos de los resultados son compatibles con algunos de los hallazgos que fueron revi sados en los antecedentes. Como por ejemplo, que ser mayor representa una ventaja en el mercado laboral. Los empresarios se inclinan por contratar personas experimentadas creando las dificultades que enfrentan los jóvenes (sin experiencia) al intentar encontrar empleos de calidad.</p></li>
+<li><p>El estudio también confirma que venir de una familia con buenos ingresos económicos incrementa la posibilidad de tener empleo formal, mientras que no ser propietario de la casa en la que vive y que en la vivienda haya condiciones de hacinamiento (por cada persona y hogar adicional en la misma vivienda) disminuye las probabilidades de formalidad laboral.</p></li>
+<li><p>Se torna cada vez más improbable que sea un empleo formal el próximo trabajo de una persona que ha demorado mucho tiempo desempleada. Luego de que un individuo deje atrás un trabajo, cada mes que transcurre sin que encuentre uno nuevo disminuye las posibilidades de tener un empleo formal en un 0.6%.</p></li>
+<li><p>Los resultados demostraron la importancia que tiene la educación a la hora de in crementar las probabilidades de tener empleo formal. Esto es algo que se ha venido señalando por los estudiosos del capital humano y su relevancia en la sociedad. Tener maestría, por ejemplo, hace 44 veces más probable tener un empleo formal.</p></li>
+</ol>
+<section id="recomendaciones">
+<h2>Recomendaciones<a class="headerlink" href="#recomendaciones" title="Link to this heading">#</a></h2>
+<ol class="arabic simple">
+<li><p>El diseño de políticas públicas con enfoque de género que priorice la inserción laboral de las mujeres podría ser necesario para el cierre de las brechas existentes entre ambos sexos. En ese sentido se podría llegar a acuerdos con el sector privado para implementar con ellos algunas de las estrategias que se han llevado a cabo en el sector público y que han garantizado paridad de género en cargos oficiales.</p></li>
+<li><p>Desde el estado se podrían implementar incentivos como alivios en la estructura de impuestos de las empresas del sector privado si garantizan la inclusión de personas jóvenes que buscan su primera experiencia laboral.</p></li>
+<li><p>Resulta importante el diseño y la implementación de políticas de intermediación laboral que acerquen a las personas con los empleadores con el propósito de evitar que la persona tome mucho tiempo en encontrar una nueva oportunidad de trabajo. Es aquí donde entran en función las cajas de compensación laboral.</p></li>
+<li><p>Es primordial incrementar esfuerzos que garanticen un acceso universal a la educa ción especialmente en niveles superiores. Con base en esto se recomienda fortalecer el programa de matrícula cero e incrementar la inversión en universidades con el fin de facilitar una ampliación en el número de cupos que se otorga cada año.</p></li>
+<li><p>La importancia de este trabajo radica en que permite señalar aquellas variables so cioeconómicas que más influyen en la probabilidad de tener un empleo formal. Sin embargo, como idea para proyectos futuros se podrían intentar buscar las razones que hacen que las variables mencionadas sean influyentes y determinantes dentro de la formalidad. Por ejemplo, ¿por qué aquellas personas que toman más tiempo en lle gar a su sitio de trabajo tienen más probabilidades de tener empleo formal? ¿Tener una buena infraestructura de transporte público ayudaría a más personas a salir de la informalidad?</p></li>
 </ol>
 </section>
 </section>
@@ -447,6 +457,15 @@ la probabilidad de estar ocupado formalmente en Colombia.</p></li>
                 <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
+    <a class="left-prev"
+       href="capitulo4.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Modelo de regresión logística</p>
+      </div>
+    </a>
 </div>
                 </footer>
               
@@ -463,9 +482,9 @@ la probabilidad de estar ocupado formalmente en Colombia.</p></li>
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Objetivos</a></li>
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#objetivo-general">Objetivo General</a><ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#objetivos-especificos">Objetivos Específicos</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Conclusiones y recomendaciones</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#conclusiones">Conclusiones</a><ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recomendaciones">Recomendaciones</a></li>
 </ul>
 </li>
 </ul>

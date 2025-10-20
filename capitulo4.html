@@ -60,6 +60,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'capitulo4';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Análisis Exploratorio" href="capitulo2.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -122,8 +123,6 @@
       
       
       
-        
-      
       <div class="bd-sidebar-primary bd-sidebar">
         
 
@@ -179,11 +178,17 @@
                 </a>
             </li>
         </ul>
-        <ul class="nav bd-sidenav">
+        <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="capitulo1.html">Objetivos</a></li>
 
 <li class="toctree-l1"><a class="reference internal" href="capitulo3.html">Metodología</a></li>
 <li class="toctree-l1"><a class="reference internal" href="capitulo2.html">Análisis Exploratorio</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Modelo de regresión logística</a></li>
+
+
+
+
+
 </ul>
 
     </div>
@@ -356,7 +361,9 @@ document.write(`
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -372,6 +379,20 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Modelo de regresión logística</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#prueba-estadistico-de-wald">Prueba estadístico de Wald</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#prueba-de-razon-de-verosimilitud-likelihood-ratio-test">Prueba de razón de verosimilitud (Likelihood Ratio Test)</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#pseudo-r2-como-mcfadden-cox-snell-nagelkerke">Pseudo R² (como McFadden, Cox Snell, Nagelkerke)</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#test-de-hosmer-y-lemeshow">Test de Hosmer y Lemeshow</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#capacidad-predictiva-del-modelo-de-regresion-logistica">Capacidad predictiva del modelo de regresión logística</a></li>
+</ul>
+
+            </nav>
         </div>
     </div>
 </div>
@@ -383,17 +404,11 @@ document.write(`
                   
   <section id="modelo-de-regresion-logistica">
 <h1>Modelo de regresión logística<a class="headerlink" href="#modelo-de-regresion-logistica" title="Link to this heading">#</a></h1>
+<p>Como se ha señalado anteriormente, la variable respuesta de este modelo será la variable formalidad con niveles 1 para formal y 0 para informal</p>
+<p>Es importante aclarar que los resultados que se muestran a continuación se estimaron después de la eliminación de algunas variables que causaban multicolinealidad en el modelo (Ver Prueba de VIF)</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
-<span class="n">datos</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;/Users/macbook/Downloads/datos_winsor.csv&quot;</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">columnas</span> <span class="o">=</span> <span class="p">[</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">variables</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s1">&#39;formalidad&#39;</span><span class="p">,</span> <span class="s1">&#39;CLASE&#39;</span><span class="p">,</span> <span class="s1">&#39;Sexo&#39;</span><span class="p">,</span> <span class="s1">&#39;Edad&#39;</span><span class="p">,</span> <span class="s1">&#39;Parentesco con jefe de hogar&#39;</span><span class="p">,</span>
     <span class="s1">&#39;¿Usted se reconoce como?&#39;</span><span class="p">,</span> <span class="s1">&#39;Estado civil&#39;</span><span class="p">,</span>
     <span class="s1">&#39;¿Afiliado, cotizante o beneficiario de seguridad social en salud?&#39;</span><span class="p">,</span>
@@ -410,108 +425,387 @@ document.write(`
     <span class="s1">&#39;Meses que estuvo sin empleo entre su trabajo actual y el anterior&#39;</span><span class="p">,</span>
     <span class="s1">&#39;Tiempo de desplazamiento hasta su sitio de trabajo&#39;</span>
 <span class="p">]</span>
-
-<span class="n">datos_modelo</span> <span class="o">=</span> <span class="n">datos</span><span class="p">[</span><span class="n">columnas</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">X</span> <span class="o">=</span> <span class="n">datos_modelo</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;formalidad&#39;</span><span class="p">])</span>
-<span class="n">y</span> <span class="o">=</span> <span class="n">datos_modelo</span><span class="p">[</span><span class="s1">&#39;formalidad&#39;</span><span class="p">]</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Filtrar el DataFrame</span>
+<span class="n">df_modelo</span> <span class="o">=</span> <span class="n">datos</span><span class="p">[</span><span class="n">variables</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;formalidad&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
-<span class="c1"># Codificar variables categóricas como dummies</span>
-<span class="n">X_encoded</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">drop_first</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
-</div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+<span class="c1"># Eliminar filas con valores faltantes</span>
+<span class="n">df_modelo</span> <span class="o">=</span> <span class="n">df_modelo</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 
-<span class="c1"># Agregar constante</span>
-<span class="n">X_encoded</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">X_encoded</span><span class="p">)</span>
+<span class="c1"># Separar variable objetivo y predictoras</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">df_modelo</span><span class="p">[</span><span class="s1">&#39;formalidad&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">df_modelo</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="s1">&#39;formalidad&#39;</span><span class="p">)</span>
 
-<span class="c1"># Ajustar modelo</span>
-<span class="n">modelo_logit</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">Logit</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X_encoded</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="c1"># Convertir variables categóricas a variables dummy</span>
+<span class="n">X_dummies</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">drop_first</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="c1"># Mostrar resumen del modelo</span>
+
+<span class="n">X_dummies</span> <span class="o">=</span> <span class="n">X_dummies</span><span class="o">.</span><span class="n">astype</span><span class="p">({</span><span class="n">col</span><span class="p">:</span> <span class="nb">int</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">X_dummies</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span><span class="o">.</span><span class="n">columns</span><span class="p">})</span>
+<span class="n">X_dummies</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">X_dummies</span><span class="p">,</span> <span class="n">has_constant</span><span class="o">=</span><span class="s1">&#39;add&#39;</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>   
+
+
+
+<span class="n">modelo_logit</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">Logit</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X_dummies</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">modelo_logit</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">ValueError</span><span class="g g-Whitespace">                                </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span> <span class="n">line</span> <span class="mi">7</span>
-<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="n">X_encoded</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">X_encoded</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="c1"># Ajustar modelo</span>
-<span class="ne">----&gt; </span><span class="mi">7</span> <span class="n">modelo_logit</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">Logit</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X_encoded</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
-<span class="g g-Whitespace">      </span><span class="mi">9</span> <span class="c1"># Mostrar resumen del modelo</span>
-<span class="g g-Whitespace">     </span><span class="mi">10</span> <span class="nb">print</span><span class="p">(</span><span class="n">modelo_logit</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
+<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">line</span> <span class="mi">2</span>
+<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="c1"># Filtrar el DataFrame</span>
+<span class="ne">----&gt; </span><span class="mi">2</span> <span class="n">df_modelo</span> <span class="o">=</span> <span class="n">datos</span><span class="p">[</span><span class="n">variables</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;formalidad&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="g g-Whitespace">      </span><span class="mi">4</span> <span class="c1"># Eliminar filas con valores faltantes</span>
+<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">df_modelo</span> <span class="o">=</span> <span class="n">df_modelo</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
 
-<span class="nn">File /Applications/miniconda3/envs/ml_venve/lib/python3.10/site-packages/statsmodels/discrete/discrete_model.py:475,</span> in <span class="ni">BinaryModel.__init__</span><span class="nt">(self, endog, exog, offset, check_rank, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">472</span> <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">check_rank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="g g-Whitespace">    </span><span class="mi">473</span>     <span class="c1"># unconditional check, requires no extra kwargs added by subclasses</span>
-<span class="g g-Whitespace">    </span><span class="mi">474</span>     <span class="bp">self</span><span class="o">.</span><span class="n">_check_kwargs</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">475</span>     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">,</span> <span class="n">offset</span><span class="o">=</span><span class="n">offset</span><span class="p">,</span> <span class="n">check_rank</span><span class="o">=</span><span class="n">check_rank</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">476</span>                      <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">477</span>     <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="n">MultinomialModel</span><span class="p">):</span>
-<span class="g g-Whitespace">    </span><span class="mi">478</span>         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">endog</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">endog</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)):</span>
-
-<span class="nn">File /Applications/miniconda3/envs/ml_venve/lib/python3.10/site-packages/statsmodels/discrete/discrete_model.py:185,</span> in <span class="ni">DiscreteModel.__init__</span><span class="nt">(self, endog, exog, check_rank, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">183</span> <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">,</span> <span class="n">check_rank</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="g g-Whitespace">    </span><span class="mi">184</span>     <span class="bp">self</span><span class="o">.</span><span class="n">_check_rank</span> <span class="o">=</span> <span class="n">check_rank</span>
-<span class="ne">--&gt; </span><span class="mi">185</span>     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">186</span>     <span class="bp">self</span><span class="o">.</span><span class="n">raise_on_perfect_prediction</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># keep for backwards compat</span>
-<span class="g g-Whitespace">    </span><span class="mi">187</span>     <span class="bp">self</span><span class="o">.</span><span class="n">k_extra</span> <span class="o">=</span> <span class="mi">0</span>
-
-<span class="nn">File /Applications/miniconda3/envs/ml_venve/lib/python3.10/site-packages/statsmodels/base/model.py:270,</span> in <span class="ni">LikelihoodModel.__init__</span><span class="nt">(self, endog, exog, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">269</span> <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="ne">--&gt; </span><span class="mi">270</span>     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">271</span>     <span class="bp">self</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
-
-<span class="nn">File /Applications/miniconda3/envs/ml_venve/lib/python3.10/site-packages/statsmodels/base/model.py:95,</span> in <span class="ni">Model.__init__</span><span class="nt">(self, endog, exog, **kwargs)</span>
-<span class="g g-Whitespace">     </span><span class="mi">93</span> <span class="n">missing</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;missing&#39;</span><span class="p">,</span> <span class="s1">&#39;none&#39;</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">94</span> <span class="n">hasconst</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;hasconst&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-<span class="ne">---&gt; </span><span class="mi">95</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_data</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">,</span> <span class="n">missing</span><span class="p">,</span> <span class="n">hasconst</span><span class="p">,</span>
-<span class="g g-Whitespace">     </span><span class="mi">96</span>                               <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">97</span> <span class="bp">self</span><span class="o">.</span><span class="n">k_constant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">k_constant</span>
-<span class="g g-Whitespace">     </span><span class="mi">98</span> <span class="bp">self</span><span class="o">.</span><span class="n">exog</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">exog</span>
-
-<span class="nn">File /Applications/miniconda3/envs/ml_venve/lib/python3.10/site-packages/statsmodels/base/model.py:135,</span> in <span class="ni">Model._handle_data</span><span class="nt">(self, endog, exog, missing, hasconst, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">134</span> <span class="k">def</span><span class="w"> </span><span class="nf">_handle_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">,</span> <span class="n">missing</span><span class="p">,</span> <span class="n">hasconst</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="ne">--&gt; </span><span class="mi">135</span>     <span class="n">data</span> <span class="o">=</span> <span class="n">handle_data</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">,</span> <span class="n">missing</span><span class="p">,</span> <span class="n">hasconst</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">136</span>     <span class="c1"># kwargs arrays could have changed, easier to just attach here</span>
-<span class="g g-Whitespace">    </span><span class="mi">137</span>     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-
-<span class="nn">File /Applications/miniconda3/envs/ml_venve/lib/python3.10/site-packages/statsmodels/base/data.py:675,</span> in <span class="ni">handle_data</span><span class="nt">(endog, exog, missing, hasconst, **kwargs)</span>
-<span class="g g-Whitespace">    </span><span class="mi">672</span>     <span class="n">exog</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">exog</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">674</span> <span class="n">klass</span> <span class="o">=</span> <span class="n">handle_data_class_factory</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">)</span>
-<span class="ne">--&gt; </span><span class="mi">675</span> <span class="k">return</span> <span class="n">klass</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="o">=</span><span class="n">exog</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="n">missing</span><span class="p">,</span> <span class="n">hasconst</span><span class="o">=</span><span class="n">hasconst</span><span class="p">,</span>
-<span class="g g-Whitespace">    </span><span class="mi">676</span>              <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-<span class="nn">File /Applications/miniconda3/envs/ml_venve/lib/python3.10/site-packages/statsmodels/base/data.py:84,</span> in <span class="ni">ModelData.__init__</span><span class="nt">(self, endog, exog, missing, hasconst, **kwargs)</span>
-<span class="g g-Whitespace">     </span><span class="mi">82</span>     <span class="bp">self</span><span class="o">.</span><span class="n">orig_endog</span> <span class="o">=</span> <span class="n">endog</span>
-<span class="g g-Whitespace">     </span><span class="mi">83</span>     <span class="bp">self</span><span class="o">.</span><span class="n">orig_exog</span> <span class="o">=</span> <span class="n">exog</span>
-<span class="ne">---&gt; </span><span class="mi">84</span>     <span class="bp">self</span><span class="o">.</span><span class="n">endog</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exog</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_endog_exog</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">)</span>
-<span class="g g-Whitespace">     </span><span class="mi">86</span> <span class="bp">self</span><span class="o">.</span><span class="n">const_idx</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="g g-Whitespace">     </span><span class="mi">87</span> <span class="bp">self</span><span class="o">.</span><span class="n">k_constant</span> <span class="o">=</span> <span class="mi">0</span>
-
-<span class="nn">File /Applications/miniconda3/envs/ml_venve/lib/python3.10/site-packages/statsmodels/base/data.py:509,</span> in <span class="ni">PandasData._convert_endog_exog</span><span class="nt">(self, endog, exog)</span>
-<span class="g g-Whitespace">    </span><span class="mi">507</span> <span class="n">exog</span> <span class="o">=</span> <span class="n">exog</span> <span class="k">if</span> <span class="n">exog</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">exog</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">508</span> <span class="k">if</span> <span class="n">endog</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="nb">object</span> <span class="ow">or</span> <span class="n">exog</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">exog</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="nb">object</span><span class="p">:</span>
-<span class="ne">--&gt; </span><span class="mi">509</span>     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Pandas data cast to numpy dtype of object. &quot;</span>
-<span class="g g-Whitespace">    </span><span class="mi">510</span>                      <span class="s2">&quot;Check input data with np.asarray(data).&quot;</span><span class="p">)</span>
-<span class="g g-Whitespace">    </span><span class="mi">511</span> <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_convert_endog_exog</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">)</span>
-
-<span class="ne">ValueError</span>: Pandas data cast to numpy dtype of object. Check input data with np.asarray(data).
+<span class="ne">NameError</span>: name &#39;datos&#39; is not defined
 </pre></div>
 </div>
 </div>
 </div>
+<p>De este resumen se puede concluir que el modelo estimado es estadisticamente significativo, dado que el p-valor del chi cuadrado es menor que el nivel de significancia 5%. Este modelo es mejor prediciendo las probabilidades de un empleo formal que uno sin variables. Se observa que la variable sexo, clase y edad tienen un efecto significativo sobre la probabilidad de tener empleo formal. Según los resultados es 1,186 veces más probable conseguir empleo formal si vives en la zona urbana en comparación con trabajadores de zonas rurales. Ser mujer hace menos probable estar en la formalidad, y por cada año de edad se incrementa esta probabilidad en un 0.8%. En cuanto a parentesco con jefe del hogar, ser el nieto, esposo(a) u otro pariente no son significativas dentro del modelo. Al hablar de pertenencia a una comunidad, sólo si la persona se identifica como raizal tiene influencia en la probabilidad de empleo formal.</p>
+<p>El estado civil es una variable significativa dentro del modelo; sin embargo, pertenecer a cualquiera de las categorías que no sea estar casado disminuye las probabilidades de tener un empleo formal. Estar afiliado a seguridad social hace más probable tener un empleo formal que aquellos que no tienen afiliación. Como era de esperarse, tener educación superior incrementa las probabilidades de estar empleado formalmente que aquellos que no la tienen. La significancia estadística de tener contrato laboral indica que si el individuo tiene uno, es más probable que tenga empleo formal que aquellos que no. Por otro lado, si lleva muchos meses continuos en el mismo empleo, es más probable que esté formalizado.</p>
+<p>Según los resultados si la ocupación que desempeña el individuo es como obrero o empleado del gobierno, las probabilidades de que esté formalizado son mayores que las de aquellos que desempeñan otra actividad. Si ha recibido ingresos por arriendo o pensiones, es más probable tener un empleo formal que aquellos que no. Ser propietario de inmuebles incrementa la razón de probabilidad de tener un empleo formal en un 24.2%. Vivir en apartamento hace más probable tener un empleo formal que vivir en otro tipo de vivienda, y tener energía eléctrica, además de pertenecer a un estrato alto, incrementa el log-odds de tener empleo formal.</p>
+<p>Por hogar adicional en una misma vivienda se reduce la probabilidad de que la persona tenga empleo formal en un 23.1%. Por cada cuarto adicional en la vivienda incrementa la posibilidad de que la persona esté formalizada en un 16.1%. Si la vivienda es propia, mayor es la posibilidad de formalidad laboral. Por cada persona adicional en la vivienda, es menos probable que el individuo tenga empleo formal. Vivir en ciudades como Medellín y Manizales hace más probable que ser formal ocurra, y por cada mes que demora una persona en conseguir empleo desde su última experiencia laboral, se disminuye la probabilidad de que tenga un empleo formal en un 0.6%. Por último, por cada minuto adicional que tarde un trabajador en llegar hasta su puesto de trabajo, las probabilidades de que tenga un empleo formal incrementan en un 1.5%</p>
+</section>
+<section id="prueba-estadistico-de-wald">
+<h1>Prueba estadístico de Wald<a class="headerlink" href="#prueba-estadistico-de-wald" title="Link to this heading">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">wald_test</span> <span class="o">=</span> <span class="n">modelo_logit</span><span class="o">.</span><span class="n">tvalues</span><span class="o">**</span><span class="mi">2</span>  <span class="c1"># z^2 = estadístico de Wald</span>
+<span class="n">wald_test_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s1">&#39;Variable&#39;</span><span class="p">:</span> <span class="n">modelo_logit</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">index</span><span class="p">,</span>
+    <span class="s1">&#39;Wald_Statistic&#39;</span><span class="p">:</span> <span class="n">wald_test</span><span class="p">,</span>
+    <span class="s1">&#39;p_value&#39;</span><span class="p">:</span> <span class="n">modelo_logit</span><span class="o">.</span><span class="n">pvalues</span>
+<span class="p">})</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">wald_test_df</span><span class="o">.</span><span class="n">head</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                                                                                             Variable  \
+const                                                                                           const   
+Edad                                                                                             Edad   
+¿Cuánto tiempo lleva en esta empresa trabajando...  ¿Cuánto tiempo lleva en esta empresa trabajand...   
+Número de hogares en la vivienda                                     Número de hogares en la vivienda   
+Número de cuartos                                                                   Número de cuartos   
+
+                                                    Wald_Statistic  \
+const                                                   614.400647   
+Edad                                                    185.565584   
+¿Cuánto tiempo lleva en esta empresa trabajando...      490.722931   
+Número de hogares en la vivienda                         33.444337   
+Número de cuartos                                       516.068151   
+
+                                                          p_value  
+const                                               1.234824e-135  
+Edad                                                 2.953433e-42  
+¿Cuánto tiempo lleva en esta empresa trabajando...  9.919981e-109  
+Número de hogares en la vivienda                     7.333299e-09  
+Número de cuartos                                   3.033708e-114  
+</pre></div>
+</div>
+</div>
+</div>
+<p>Con un p-valor menor al nivel de significancia, se rechaza la hipótesis nula, y se concluye que al menos uno de los coeficientes es distinto a cero. El modelo ajustado es mejor que uno sin variables</p>
+</section>
+<section id="prueba-de-razon-de-verosimilitud-likelihood-ratio-test">
+<h1>Prueba de razón de verosimilitud (Likelihood Ratio Test)<a class="headerlink" href="#prueba-de-razon-de-verosimilitud-likelihood-ratio-test" title="Link to this heading">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+
+<span class="c1"># Modelo nulo (solo intercepto)</span>
+<span class="n">modelo_nulo</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">Logit</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">y</span><span class="o">.</span><span class="n">index</span><span class="p">)))</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">disp</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>
+
+<span class="c1"># Log-likelihoods</span>
+<span class="n">LL_nulo</span> <span class="o">=</span> <span class="n">modelo_nulo</span><span class="o">.</span><span class="n">llf</span>
+<span class="n">LL_completo</span> <span class="o">=</span> <span class="n">modelo_logit</span><span class="o">.</span><span class="n">llf</span>
+
+<span class="c1"># Estadístico de prueba</span>
+<span class="n">LR_stat</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">LL_nulo</span> <span class="o">-</span> <span class="n">LL_completo</span><span class="p">)</span>
+
+<span class="c1"># Grados de libertad = diferencia en número de parámetros</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">modelo_logit</span><span class="o">.</span><span class="n">df_model</span> <span class="o">-</span> <span class="n">modelo_nulo</span><span class="o">.</span><span class="n">df_model</span>
+
+<span class="c1"># p-valor</span>
+<span class="n">p_value</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">LR_stat</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Estadístico LR: </span><span class="si">{</span><span class="n">LR_stat</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Grados de libertad: </span><span class="si">{</span><span class="n">df</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;p-valor: </span><span class="si">{</span><span class="n">p_value</span><span class="si">:</span><span class="s2">.5f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Estadístico LR: 253281.084
+Grados de libertad: 92.0
+p-valor: 0.00000
+</pre></div>
+</div>
+</div>
+</div>
+<p>Con un p-valor de menor al nivel de significancia, se rechaza la hipotésis nula y se concluye que el modelo más complejo tiene un mejor ajuste que el modelo con solo el intercepto. Por tanto, el modelo estimado provee información útil a la hora de explicar la variabilidad de la variable respuesta.</p>
+</section>
+<section id="pseudo-r2-como-mcfadden-cox-snell-nagelkerke">
+<h1>Pseudo R² (como McFadden, Cox Snell, Nagelkerke)<a class="headerlink" href="#pseudo-r2-como-mcfadden-cox-snell-nagelkerke" title="Link to this heading">#</a></h1>
+<p>Como se pudo observar en la salida, El modelo es bueno explicando aproximadamente el 68% de la variabilidad de la variable formalidad.</p>
+</section>
+<section id="test-de-hosmer-y-lemeshow">
+<h1>Test de Hosmer y Lemeshow<a class="headerlink" href="#test-de-hosmer-y-lemeshow" title="Link to this heading">#</a></h1>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>
+
+<span class="c1"># 1️⃣ Obtener las probabilidades predichas del modelo</span>
+<span class="n">predicciones</span> <span class="o">=</span> <span class="n">modelo_logit</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_dummies</span><span class="p">)</span>
+
+<span class="c1"># 2️⃣ Crear un DataFrame con valores observados y predichos</span>
+<span class="n">df_hl</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;observado&#39;</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;predicho&#39;</span><span class="p">:</span> <span class="n">predicciones</span><span class="p">})</span>
+
+<span class="c1"># 3️⃣ Dividir las predicciones en 10 grupos (deciles)</span>
+<span class="n">df_hl</span><span class="p">[</span><span class="s1">&#39;grupo&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">qcut</span><span class="p">(</span><span class="n">df_hl</span><span class="p">[</span><span class="s1">&#39;predicho&#39;</span><span class="p">],</span> <span class="mi">10</span><span class="p">,</span> <span class="n">duplicates</span><span class="o">=</span><span class="s1">&#39;drop&#39;</span><span class="p">)</span>
+
+<span class="c1"># 4️⃣ Calcular observados y esperados en cada grupo</span>
+<span class="n">tabla_hl</span> <span class="o">=</span> <span class="n">df_hl</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">&#39;grupo&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+    <span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">({</span>
+        <span class="s1">&#39;observados_1&#39;</span><span class="p">:</span> <span class="n">g</span><span class="p">[</span><span class="s1">&#39;observado&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span>
+        <span class="s1">&#39;observados_0&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">g</span><span class="p">[</span><span class="s1">&#39;observado&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span>
+        <span class="s1">&#39;esperados_1&#39;</span><span class="p">:</span> <span class="n">g</span><span class="p">[</span><span class="s1">&#39;predicho&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span>
+        <span class="s1">&#39;esperados_0&#39;</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">g</span><span class="p">[</span><span class="s1">&#39;predicho&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="p">})</span>
+<span class="p">)</span>
+
+<span class="c1"># 5️⃣ Calcular estadístico de Hosmer-Lemeshow</span>
+<span class="n">hl_stat</span> <span class="o">=</span> <span class="p">(((</span><span class="n">tabla_hl</span><span class="p">[</span><span class="s1">&#39;observados_1&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">tabla_hl</span><span class="p">[</span><span class="s1">&#39;esperados_1&#39;</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">tabla_hl</span><span class="p">[</span><span class="s1">&#39;esperados_1&#39;</span><span class="p">]</span> <span class="o">+</span>
+           <span class="p">((</span><span class="n">tabla_hl</span><span class="p">[</span><span class="s1">&#39;observados_0&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">tabla_hl</span><span class="p">[</span><span class="s1">&#39;esperados_0&#39;</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">tabla_hl</span><span class="p">[</span><span class="s1">&#39;esperados_0&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+<span class="c1"># 6️⃣ Grados de libertad = número de grupos - 2</span>
+<span class="n">df</span> <span class="o">=</span> <span class="n">tabla_hl</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">2</span>
+
+<span class="c1"># 7️⃣ p-valor</span>
+<span class="n">p_value</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">hl_stat</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Estadístico Hosmer-Lemeshow: </span><span class="si">{</span><span class="n">hl_stat</span><span class="si">:</span><span class="s1">.3f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Grados de libertad: </span><span class="si">{</span><span class="n">df</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;p-valor: </span><span class="si">{</span><span class="n">p_value</span><span class="si">:</span><span class="s1">.5f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">p_value</span> <span class="o">&gt;</span> <span class="mf">0.05</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✅ No se rechaza H₀: El modelo se ajusta bien a los datos.&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;⚠️ Se rechaza H₀: El modelo no se ajusta bien a los datos.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Estadístico Hosmer-Lemeshow: 792.622
+Grados de libertad: 8
+p-valor: 0.00000
+⚠️ Se rechaza H₀: El modelo no se ajusta bien a los datos.
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/var/folders/83/zn8x0yz50rd407m55phbdf5h0000gp/T/ipykernel_15057/2490104013.py:15: FutureWarning: The default of observed=False is deprecated and will be changed to True in a future version of pandas. Pass observed=False to retain current behavior or observed=True to adopt the future default and silence this warning.
+  tabla_hl = df_hl.groupby(&#39;grupo&#39;).apply(
+/var/folders/83/zn8x0yz50rd407m55phbdf5h0000gp/T/ipykernel_15057/2490104013.py:15: FutureWarning: DataFrameGroupBy.apply operated on the grouping columns. This behavior is deprecated, and in a future version of pandas the grouping columns will be excluded from the operation. Either pass `include_groups=False` to exclude the groupings or explicitly select the grouping columns after groupby to silence this warning.
+  tabla_hl = df_hl.groupby(&#39;grupo&#39;).apply(
+</pre></div>
+</div>
+</div>
+</div>
+<p>Como resultado de la aplicación del test de Hosmer se obtiene un p-valor al nivel de significancia del 5%, por lo que se rechaza la hipótesis nula de que el modelo se ajusta bien a los datos. Sin embargo, dicho resultado no es suficiente para descartar el modelo; por el contrario, debe ser contrastado con el hallazgo de otras métricas.Nattino et al. (2020) han señalado anteriormente las limitaciones de esta prueba para el caso de grandes muestras.</p>
+</section>
+<section id="capacidad-predictiva-del-modelo-de-regresion-logistica">
+<h1>Capacidad predictiva del modelo de regresión logística<a class="headerlink" href="#capacidad-predictiva-del-modelo-de-regresion-logistica" title="Link to this heading">#</a></h1>
+<p>Luego de ajustar el modelo de regresión logística para poder interpretar aquellas variables que más aportan a la probabilidad de tener un empleo formal, se quiere ahora verificar su capacidad predictiva. Se divide el conjunto de datos de la siguiente forma: 80% para training y 20% para test. Posteriormente, se estima el modelo para el conjunto de training y se evalúan sus métricas.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">statsmodels.api</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sm</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">confusion_matrix</span><span class="p">,</span> <span class="n">accuracy_score</span><span class="p">,</span> <span class="n">precision_score</span><span class="p">,</span> <span class="n">recall_score</span><span class="p">,</span> <span class="n">f1_score</span>
+<span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">roc_curve</span><span class="p">,</span> <span class="n">roc_auc_score</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="c1"># Dividir los datos en 80% entrenamiento y 20% prueba</span>
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span>
+    <span class="n">X_dummies</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">stratify</span><span class="o">=</span><span class="n">y</span>
+<span class="p">)</span>
+<span class="c1"># Ajustar el modelo en los datos de entrenamiento</span>
+<span class="n">modelo_train</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">Logit</span><span class="p">(</span><span class="n">y_train</span><span class="p">,</span> <span class="n">X_train</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+<span class="c1"># Resumen del modelo</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">modelo_train</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+
+<span class="c1"># Predicciones de probabilidad y clasificación</span>
+<span class="n">y_pred_prob</span> <span class="o">=</span> <span class="n">modelo_train</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_test</span><span class="p">)</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">y_pred_prob</span> <span class="o">&gt;=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># Métricas</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Matriz de Confusión:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Exactitud:&quot;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">accuracy_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">),</span> <span class="mi">3</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Precisión:&quot;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">precision_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">),</span> <span class="mi">3</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Recall:&quot;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">recall_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">),</span> <span class="mi">3</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;F1 Score:&quot;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">f1_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">),</span> <span class="mi">3</span><span class="p">))</span>
+
+<span class="c1"># Calcular curva ROC</span>
+<span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">thresholds</span> <span class="o">=</span> <span class="n">roc_curve</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred_prob</span><span class="p">)</span>
+<span class="n">auc_score</span> <span class="o">=</span> <span class="n">roc_auc_score</span><span class="p">(</span><span class="n">y_test</span><span class="p">,</span> <span class="n">y_pred_prob</span><span class="p">)</span>
+
+<span class="c1"># Graficar</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">fpr</span><span class="p">,</span> <span class="n">tpr</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;AUC = </span><span class="si">{</span><span class="n">auc_score</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;k--&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Tasa de Falsos Positivos (FPR)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Tasa de Verdaderos Positivos (TPR)&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Curva ROC - Modelo Logístico&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Warning: Maximum number of iterations has been exceeded.
+         Current function value: 0.328824
+         Iterations: 35
+</pre></div>
+</div>
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Applications/miniconda3/envs/ml_venve/lib/python3.10/site-packages/statsmodels/base/model.py:607: ConvergenceWarning: Maximum Likelihood optimization failed to converge. Check mle_retvals
+  warnings.warn(&quot;Maximum Likelihood optimization failed to &quot;
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                           Logit Regression Results                           
+==============================================================================
+Dep. Variable:             formalidad   No. Observations:               282937
+Model:                          Logit   Df Residuals:                   282844
+Method:                           MLE   Df Model:                           92
+Date:                Mon, 20 Oct 2025   Pseudo R-squ.:                  0.5207
+Time:                        08:33:54   Log-Likelihood:                -93036.
+converged:                      False   LL-Null:                   -1.9410e+05
+Covariance Type:            nonrobust   LLR p-value:                     0.000
+=======================================================================================================================================================================
+                                                                                                          coef    std err          z      P&gt;|z|      [0.025      0.975]
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+const                                                                                                 -12.2502      0.546    -22.441      0.000     -13.320     -11.180
+Edad                                                                                                    0.0077      0.001     12.107      0.000       0.006       0.009
+¿Cuánto tiempo lleva en esta empresa trabajando de forma continua (meses)?                              0.0016    7.6e-05     20.474      0.000       0.001       0.002
+Número de hogares en la vivienda                                                                       -0.2681      0.050     -5.328      0.000      -0.367      -0.169
+Número de cuartos                                                                                       0.1514      0.007     20.692      0.000       0.137       0.166
+Total de personas en el hogar                                                                          -0.0626      0.005    -13.663      0.000      -0.072      -0.054
+Meses que estuvo sin empleo entre su trabajo actual y el anterior                                      -0.0055      0.001     -8.094      0.000      -0.007      -0.004
+Tiempo de desplazamiento hasta su sitio de trabajo                                                      0.0147      0.000     44.850      0.000       0.014       0.015
+CLASE_Urbano                                                                                            0.1697      0.023      7.533      0.000       0.126       0.214
+Sexo_Mujer                                                                                             -0.3103      0.013    -23.492      0.000      -0.336      -0.284
+Parentesco con jefe de hogar_Hijo(a), hijastro(a)                                                       0.1007      0.043      2.352      0.019       0.017       0.185
+Parentesco con jefe de hogar_Jefe(a) del hogar                                                          0.3368      0.043      7.825      0.000       0.252       0.421
+Parentesco con jefe de hogar_Nieto(a)                                                                  -0.1237      0.101     -1.229      0.219      -0.321       0.074
+Parentesco con jefe de hogar_Otro no pariente                                                           0.0585      0.052      1.134      0.257      -0.043       0.160
+Parentesco con jefe de hogar_Otro pariente                                                              0.0074      0.175      0.042      0.966      -0.335       0.350
+Parentesco con jefe de hogar_Pareja, esposo(a), cónyuge, compañero(a)                                   0.1886      0.046      4.105      0.000       0.099       0.279
+Parentesco con jefe de hogar_Pensionista                                                                0.1426      0.063      2.276      0.023       0.020       0.265
+Parentesco con jefe de hogar_Trabajador                                                                -0.3055      0.063     -4.883      0.000      -0.428      -0.183
+¿Usted se reconoce como?_Indígena                                                                       0.2958      0.419      0.706      0.480      -0.525       1.117
+¿Usted se reconoce como?_Negro (a), mulato (a) (afrodescendiente), afrocolombiano(a)                    0.2973      0.418      0.711      0.477      -0.522       1.117
+¿Usted se reconoce como?_Ninguno de los anteriores                                                      0.4488      0.417      1.075      0.282      -0.369       1.267
+¿Usted se reconoce como?_Palenquero (a) de San Basilio                                                  0.5081      0.524      0.969      0.333      -0.520       1.536
+¿Usted se reconoce como?_Raizal del archipiélago de San Andrés, Providencia y Santa Catalina            1.7845      0.438      4.074      0.000       0.926       2.643
+Estado civil_Esta separado (a) o divorciado (a)                                                        -0.4232      0.023    -18.287      0.000      -0.469      -0.378
+Estado civil_Esta soltero (a)                                                                          -0.4125      0.024    -17.493      0.000      -0.459      -0.366
+Estado civil_Esta viudo (a)                                                                            -0.7609      0.049    -15.500      0.000      -0.857      -0.665
+Estado civil_No esta casado (a) y vive en pareja hace dos años o más                                   -0.0751      0.018     -4.119      0.000      -0.111      -0.039
+Estado civil_No esta casado(a) y vive en pareja hace menos de dos años                                 -0.2614      0.039     -6.744      0.000      -0.337      -0.185
+¿Afiliado, cotizante o beneficiario de seguridad social en salud?_No sabe, no informa                   2.3773      0.794      2.994      0.003       0.821       3.934
+¿Afiliado, cotizante o beneficiario de seguridad social en salud?_Sí                                    7.0349      0.306     23.019      0.000       6.436       7.634
+Mayor nivel educativo alcanzado_Básica secundaria                                                       0.1883      0.025      7.458      0.000       0.139       0.238
+Mayor nivel educativo alcanzado_Doctorado                                                               3.3519      0.291     11.529      0.000       2.782       3.922
+Mayor nivel educativo alcanzado_Especialización                                                         3.7207      0.053     70.649      0.000       3.617       3.824
+Mayor nivel educativo alcanzado_Maestría                                                                3.7524      0.090     41.578      0.000       3.576       3.929
+Mayor nivel educativo alcanzado_Media académica                                                         1.0650      0.020     52.865      0.000       1.026       1.105
+Mayor nivel educativo alcanzado_Media técnica                                                           1.4233      0.038     37.651      0.000       1.349       1.497
+Mayor nivel educativo alcanzado_Ninguno                                                                -0.6628      0.062    -10.733      0.000      -0.784      -0.542
+Mayor nivel educativo alcanzado_No sabe, no informa                                                     1.8959      1.434      1.322      0.186      -0.915       4.707
+Mayor nivel educativo alcanzado_Normalista                                                              1.6713      0.152     10.999      0.000       1.373       1.969
+Mayor nivel educativo alcanzado_Preescolar                                                            -18.0133   3789.990     -0.005      0.996   -7446.256    7410.230
+Mayor nivel educativo alcanzado_Tecnológica                                                             2.1595      0.034     64.016      0.000       2.093       2.226
+Mayor nivel educativo alcanzado_Técnica profesional                                                     2.0002      0.026     76.718      0.000       1.949       2.051
+Mayor nivel educativo alcanzado_Universitaria                                                           2.4152      0.025     95.340      0.000       2.366       2.465
+Para la ocupación que desempeña, ¿tiene algún tipo de contrato_Sí                                       2.7256      0.023    116.035      0.000       2.680       2.772
+Tipo de ocupación_Jornalero o peón                                                                     -9.0766     15.532     -0.584      0.559     -39.519      21.365
+Tipo de ocupación_Obrero o empleado de empresa particular                                               2.0945      0.034     61.642      0.000       2.028       2.161
+Tipo de ocupación_Obrero o empleado del gobierno                                                        7.8274      0.380     20.600      0.000       7.083       8.572
+Tipo de ocupación_Patrón o empleador                                                                    2.2439      0.051     43.630      0.000       2.143       2.345
+Tipo de ocupación_Trabajador familiar sin remuneración                                                  0.7029      0.086      8.182      0.000       0.535       0.871
+Tipo de ocupación_Trabajador por cuenta propia                                                          1.1096      0.038     29.291      0.000       1.035       1.184
+Tipo de ocupación_Trabajador sin remuneración en empresas o negocios de otros hogares                   0.4511      0.052      8.723      0.000       0.350       0.552
+El mes pasado, ¿recibió pagos por concepto de arriendos o pensiones?_Sí                                 1.4619      0.031     47.314      0.000       1.401       1.522
+¿Es propietario de una o varias propiedades inmuebles?_Sí                                               0.2005      0.022      9.025      0.000       0.157       0.244
+Tipo de vivienda_Casa                                                                                  -0.0694      0.014     -5.113      0.000      -0.096      -0.043
+Tipo de vivienda_Cuarto (s) en inquilinato                                                             -0.3648      0.058     -6.275      0.000      -0.479      -0.251
+Tipo de vivienda_Cuarto (s) en otro tipo de estructura                                                 -0.1807      0.125     -1.450      0.147      -0.425       0.064
+Tipo de vivienda_Otra vivienda (carpa, vagón, embarcación, cueva, refugio natural, etc.)                0.6939      0.511      1.358      0.174      -0.307       1.695
+Tipo de vivienda_Vivienda indígena                                                                      0.5919      0.171      3.453      0.001       0.256       0.928
+¿Tiene servicio de energía eléctrica?_Sí                                                                0.3039      0.132      2.294      0.022       0.044       0.564
+Estrato para tarifa_Bajo                                                                               -1.0737      0.066    -16.389      0.000      -1.202      -0.945
+Estrato para tarifa_Bajo - bajo                                                                        -1.4589      0.066    -22.069      0.000      -1.589      -1.329
+Estrato para tarifa_Conexión pirata                                                                    -1.6560      0.089    -18.653      0.000      -1.830      -1.482
+Estrato para tarifa_Medio                                                                              -0.5479      0.069     -7.959      0.000      -0.683      -0.413
+Estrato para tarifa_Medio - alto                                                                       -0.2310      0.078     -2.950      0.003      -0.384      -0.078
+Estrato para tarifa_Medio - bajo                                                                       -0.8281      0.065    -12.648      0.000      -0.956      -0.700
+Estrato para tarifa_No sabe o cuenta con planta eléctrica                                              -1.8708      0.119    -15.731      0.000      -2.104      -1.638
+La vivienda ocupada por este hogar es_En usufructo                                                     -0.0491      0.018     -2.763      0.006      -0.084      -0.014
+La vivienda ocupada por este hogar es_Otra                                                              0.0951      0.045      2.115      0.034       0.007       0.183
+La vivienda ocupada por este hogar es_Posesión sin titulo (ocupante de hecho) ó propiedad colectiva    -0.0148      0.037     -0.400      0.689      -0.087       0.058
+La vivienda ocupada por este hogar es_Propia, la están pagando                                          0.4898      0.034     14.325      0.000       0.423       0.557
+La vivienda ocupada por este hogar es_Propia, totalmente pagada                                         0.2192      0.017     12.722      0.000       0.185       0.253
+AREA_Barranquilla AM                                                                                   -0.5591      0.039    -14.275      0.000      -0.636      -0.482
+AREA_Bogotá DC                                                                                         -0.1315      0.039     -3.385      0.001      -0.208      -0.055
+AREA_Bucaramanga AM                                                                                    -0.2490      0.039     -6.450      0.000      -0.325      -0.173
+AREA_Cali AM                                                                                           -0.2312      0.038     -6.106      0.000      -0.305      -0.157
+AREA_Cartagena                                                                                         -0.3019      0.040     -7.601      0.000      -0.380      -0.224
+AREA_Cúcuta AM                                                                                         -0.3415      0.041     -8.343      0.000      -0.422      -0.261
+AREA_Florencia                                                                                         -0.3895      0.043     -9.115      0.000      -0.473      -0.306
+AREA_Ibagué                                                                                            -0.4226      0.043     -9.850      0.000      -0.507      -0.338
+AREA_Manizales AM                                                                                       0.0561      0.038      1.488      0.137      -0.018       0.130
+AREA_Medellín AM                                                                                        0.1606      0.037      4.296      0.000       0.087       0.234
+AREA_Montería                                                                                          -0.4008      0.042     -9.537      0.000      -0.483      -0.318
+AREA_Neiva                                                                                             -0.1603      0.042     -3.833      0.000      -0.242      -0.078
+AREA_Pasto                                                                                             -0.5614      0.040    -14.183      0.000      -0.639      -0.484
+AREA_Pereira AM                                                                                         0.0496      0.038      1.316      0.188      -0.024       0.124
+AREA_Popayán                                                                                           -0.7959      0.041    -19.416      0.000      -0.876      -0.716
+AREA_Quibdó                                                                                            -0.3897      0.046     -8.427      0.000      -0.480      -0.299
+AREA_Riohacha                                                                                          -0.5862      0.045    -12.887      0.000      -0.675      -0.497
+AREA_Santa Marta                                                                                       -0.4121      0.042     -9.857      0.000      -0.494      -0.330
+AREA_Sincelejo                                                                                         -0.7161      0.043    -16.594      0.000      -0.801      -0.632
+AREA_Tunja                                                                                             -0.5311      0.041    -12.804      0.000      -0.612      -0.450
+AREA_Valledupar                                                                                        -0.6852      0.043    -15.916      0.000      -0.770      -0.601
+AREA_Villavicencio                                                                                     -0.4151      0.039    -10.558      0.000      -0.492      -0.338
+=======================================================================================================================================================================
+Matriz de Confusión:
+ [[33934  5653]
+ [ 4457 26691]]
+
+Exactitud: 0.857
+Precisión: 0.825
+Recall: 0.857
+F1 Score: 0.841
+</pre></div>
+</div>
+<img alt="_images/d11570502324ef127c22661eb1471dc60076e393b10d161748b85a84d0d96833.png" src="_images/d11570502324ef127c22661eb1471dc60076e393b10d161748b85a84d0d96833.png" />
+</div>
+</div>
+<p>A partir de las métricas que se muestran en la tabla anterior, con un accuracy de 0.85, el modele es capaz de predecir correctamente casi el 86% de las observaciones. LA precisión muestra que cada vez que el modelo predice formal, lo hace correctamente el 82% de las veces. Con un F1 score de 83% el modelo parecer ser equilibrado sin favorecer falsos positivos o falsos negativos.
+El valor del área bajo la curva es de 0.93. Cifra cercana a 1 que da luces sobre la capacidad predictiva el modelo. Este es capaz de discriminar correct</p>
 </section>
 
     <script type="text/x-thebe-config">
@@ -544,12 +838,42 @@ document.write(`
                 <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
+    <a class="left-prev"
+       href="capitulo2.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Análisis Exploratorio</p>
+      </div>
+    </a>
 </div>
                 </footer>
               
             </div>
             
             
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Modelo de regresión logística</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#prueba-estadistico-de-wald">Prueba estadístico de Wald</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#prueba-de-razon-de-verosimilitud-likelihood-ratio-test">Prueba de razón de verosimilitud (Likelihood Ratio Test)</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#pseudo-r2-como-mcfadden-cox-snell-nagelkerke">Pseudo R² (como McFadden, Cox Snell, Nagelkerke)</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#test-de-hosmer-y-lemeshow">Test de Hosmer y Lemeshow</a></li>
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#capacidad-predictiva-del-modelo-de-regresion-logistica">Capacidad predictiva del modelo de regresión logística</a></li>
+</ul>
+
+  </nav></div>
+
+</div></div>
               
             
           </div>
