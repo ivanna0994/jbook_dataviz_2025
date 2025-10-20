@@ -380,6 +380,8 @@ document.write(`
                 <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#porcentaje-de-variables-con-datos-faltantes">Porcentaje de variables con datos faltantes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calcular-porcentaje-de-informalidad-por-area">Calcular porcentaje de informalidad por AREA</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#matriz-de-correlacion">Matriz de correlación</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#manejo-de-datos-atipicos">Manejo de datos atípicos</a></li>
 </ul>
             </nav>
         </div>
@@ -572,15 +574,7 @@ Obteniendo así un nuevo conjunto de datos.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Applications/miniconda3/envs/ml_venve/lib/python3.10/site-packages/seaborn/_oldcore.py:1498: FutureWarning: is_categorical_dtype is deprecated and will be removed in a future version. Use isinstance(dtype, CategoricalDtype) instead
-  if pd.api.types.is_categorical_dtype(vector):
-/Applications/miniconda3/envs/ml_venve/lib/python3.10/site-packages/seaborn/_oldcore.py:1498: FutureWarning: is_categorical_dtype is deprecated and will be removed in a future version. Use isinstance(dtype, CategoricalDtype) instead
-  if pd.api.types.is_categorical_dtype(vector):
-/Applications/miniconda3/envs/ml_venve/lib/python3.10/site-packages/seaborn/_oldcore.py:1498: FutureWarning: is_categorical_dtype is deprecated and will be removed in a future version. Use isinstance(dtype, CategoricalDtype) instead
-  if pd.api.types.is_categorical_dtype(vector):
-</pre></div>
-</div>
-<img alt="_images/0ea8e61af5aba70e53ca4a6a02a18288cb08868a4dcffe06e214c028d9778896.png" src="_images/0ea8e61af5aba70e53ca4a6a02a18288cb08868a4dcffe06e214c028d9778896.png" />
+<img alt="_images/1de2e8d4c79a289231a877b8e9bb6fc74601e151436b3a7cee84768a9040c4df.png" src="_images/1de2e8d4c79a289231a877b8e9bb6fc74601e151436b3a7cee84768a9040c4df.png" />
 </div>
 </div>
 <p>La población ocupada se dedica principalmente a actividades informales como se observa en la anterior gráfica. Se afirma a partir de estos resultados que un 55,9% de los ocupados en Colombia fueron informales, mientras que un 44,1% de los trabajadores gozaban de protección social.</p>
@@ -663,13 +657,7 @@ Obteniendo así un nuevo conjunto de datos.</p>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Applications/miniconda3/envs/ml_venve/lib/python3.10/site-packages/seaborn/_oldcore.py:1498: FutureWarning: is_categorical_dtype is deprecated and will be removed in a future version. Use isinstance(dtype, CategoricalDtype) instead
-  if pd.api.types.is_categorical_dtype(vector):
-/Applications/miniconda3/envs/ml_venve/lib/python3.10/site-packages/seaborn/_oldcore.py:1498: FutureWarning: is_categorical_dtype is deprecated and will be removed in a future version. Use isinstance(dtype, CategoricalDtype) instead
-  if pd.api.types.is_categorical_dtype(vector):
-</pre></div>
-</div>
-<img alt="_images/bd11e347d11f660ba4c65c856f60c2930d3bd644b6c8e1bdaf5c1d97056e4e76.png" src="_images/bd11e347d11f660ba4c65c856f60c2930d3bd644b6c8e1bdaf5c1d97056e4e76.png" />
+<img alt="_images/46cb83e22a37185802a48771d18c5c2b55a9f0fc097c5c6643fc09ce3f3f1a8b.png" src="_images/46cb83e22a37185802a48771d18c5c2b55a9f0fc097c5c6643fc09ce3f3f1a8b.png" />
 </div>
 </div>
 <p>Dentro de las ciudades que reportaron las más altas tasas de informalidad se encuentran Sincelejo (68,8%), Riohacha (68,4%) y Cúcuta (66,2%). Mientra que las ciudades con menores tasas de informalidad (y por consiguiente quienes tiene mayor proporción de trabajadores formalizados) fueron Medellín (43,6%), Bogotá (43,1%) y Manizales (41,9%)</p>
@@ -801,17 +789,17 @@ Total de personas en el hogar 3.407674             1.712066      3.0
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                                                                  Variable  Skewness  Kurtosis
-                                                         Número de cuartos      9.89    767.62
-                                                        Ingresos laborales     13.51    396.79
                                           Número de hogares en la vivienda     12.52    203.78
-                                                                      Edad      0.36     -0.63
                         Tiempo de desplazamiento hasta su sitio de trabajo      4.33     34.05
+                                                                      Edad      0.36     -0.63
                                              Total de personas en el hogar      1.31      4.37
-¿Cuánto tiempo lleva en esta empresa trabajando de forma continua (meses)?      2.07      4.55
+                                                        Ingresos laborales     13.51    396.79
          Meses que estuvo sin empleo entre su trabajo actual y el anterior      5.63     37.82
+                                                         Número de cuartos      9.89    767.62
+¿Cuánto tiempo lleva en esta empresa trabajando de forma continua (meses)?      2.07      4.55
 </pre></div>
 </div>
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/var/folders/83/zn8x0yz50rd407m55phbdf5h0000gp/T/ipykernel_21630/727567848.py:33: FutureWarning: The behavior of DataFrame concatenation with empty or all-NA entries is deprecated. In a future version, this will no longer exclude empty or all-NA columns when determining the result dtypes. To retain the old behavior, exclude the relevant entries before the concat operation.
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/var/folders/83/zn8x0yz50rd407m55phbdf5h0000gp/T/ipykernel_20769/727567848.py:33: FutureWarning: The behavior of DataFrame concatenation with empty or all-NA entries is deprecated. In a future version, this will no longer exclude empty or all-NA columns when determining the result dtypes. To retain the old behavior, exclude the relevant entries before the concat operation.
   resultados = pd.concat([resultados, nueva_fila], ignore_index=True)
 </pre></div>
 </div>
@@ -855,13 +843,7 @@ Total de personas en el hogar 3.407674             1.712066      3.0
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Applications/miniconda3/envs/ml_venve/lib/python3.10/site-packages/seaborn/_oldcore.py:1498: FutureWarning: is_categorical_dtype is deprecated and will be removed in a future version. Use isinstance(dtype, CategoricalDtype) instead
-  if pd.api.types.is_categorical_dtype(vector):
-/Applications/miniconda3/envs/ml_venve/lib/python3.10/site-packages/seaborn/_oldcore.py:1498: FutureWarning: is_categorical_dtype is deprecated and will be removed in a future version. Use isinstance(dtype, CategoricalDtype) instead
-  if pd.api.types.is_categorical_dtype(vector):
-</pre></div>
-</div>
-<img alt="_images/1c8c3fe2793a038425cdb50d863650f2173bb6a80a455745e1157a34829ec18a.png" src="_images/1c8c3fe2793a038425cdb50d863650f2173bb6a80a455745e1157a34829ec18a.png" />
+<img alt="_images/ceb886a46594f77e787a7cd85bf4b25b9e4b6b37c0a79beb4d9cfabade1a8622.png" src="_images/ceb886a46594f77e787a7cd85bf4b25b9e4b6b37c0a79beb4d9cfabade1a8622.png" />
 </div>
 </div>
 <p>Al analizar, por ejemplo, la edad del ocupado en función de si es formal o informal se ha encontrado que existe mayor variabilidad en la edad dentro del grupo de informales en comparación con los formales. No existen grandes diferencias entre la edad mediana de ambos grupos, y se evidencia presencia de outliers en ambas categorías con mayor cantidad dentro de los formales.</p>
@@ -950,11 +932,182 @@ Existe una diferencia estadísticamente significativa en la distribución de la 
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Applications/miniconda3/envs/ml_venve/lib/python3.10/site-packages/seaborn/_oldcore.py:1498: FutureWarning: is_categorical_dtype is deprecated and will be removed in a future version. Use isinstance(dtype, CategoricalDtype) instead
-  if pd.api.types.is_categorical_dtype(vector):
+<img alt="_images/88c4b05390d15d6a5c88d9a8c4593bb5595671dd09a361c22c6d9c3c687bb88f.png" src="_images/88c4b05390d15d6a5c88d9a8c4593bb5595671dd09a361c22c6d9c3c687bb88f.png" />
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="n">col_formalidad</span> <span class="o">=</span> <span class="s2">&quot;formalidad&quot;</span>
+<span class="n">col_meses</span> <span class="o">=</span> <span class="s2">&quot;Meses que estuvo sin empleo entre su trabajo actual y el anterior&quot;</span>
+
+
+<span class="n">datos_filtrados</span> <span class="o">=</span> <span class="n">datos2</span><span class="p">[[</span><span class="n">col_formalidad</span><span class="p">,</span> <span class="n">col_meses</span><span class="p">]]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="n">datos_filtrados</span><span class="p">[</span><span class="n">col_formalidad</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="nb">object</span><span class="p">:</span>
+    <span class="n">datos_filtrados</span><span class="p">[</span><span class="n">col_formalidad</span><span class="p">]</span> <span class="o">=</span> <span class="n">datos_filtrados</span><span class="p">[</span><span class="n">col_formalidad</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">({</span><span class="mi">0</span><span class="p">:</span> <span class="s2">&quot;Informal&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span> <span class="s2">&quot;Formal&quot;</span><span class="p">})</span>
+
+
+<span class="k">if</span> <span class="n">datos_filtrados</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No hay datos válidos para graficar.&quot;</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">titulo</span> <span class="o">=</span> <span class="s2">&quot;Distribucion del tiempo (meses) que tardaron los trabajadores en conseguir su trabajo actual tras dejar el anterior&quot;</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">boxplot</span><span class="p">(</span>
+        <span class="n">x</span><span class="o">=</span><span class="n">datos_filtrados</span><span class="p">[</span><span class="n">col_formalidad</span><span class="p">],</span>
+        <span class="n">y</span><span class="o">=</span><span class="n">datos_filtrados</span><span class="p">[</span><span class="n">col_meses</span><span class="p">],</span>
+        <span class="n">palette</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;#F8766D&quot;</span><span class="p">,</span> <span class="s2">&quot;#00BFC4&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">titulo</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Formalidad&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Meses sin trabajo entre empleo actual y anterior&quot;</span><span class="p">)</span>
+    <span class="n">sns</span><span class="o">.</span><span class="n">despine</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
-<img alt="_images/09c0c169385aa8b88c195928829a7d159d1a4475315fc8d01d438f9fa8142614.png" src="_images/09c0c169385aa8b88c195928829a7d159d1a4475315fc8d01d438f9fa8142614.png" />
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/c1217d4db1b81de071f144e333a6878277f6a2507667d095240240a26199c4bf.png" src="_images/c1217d4db1b81de071f144e333a6878277f6a2507667d095240240a26199c4bf.png" />
+</div>
+</div>
+<p>En la gráfica anterior se evidencia que no existen mayores diferencias entra la variabilidad de formales e informales cuando se habla del tiempo desempleado de un trabajador entre su empleo actual y el anterior. Por otro lado se evidencia una presencia mayoritaria de outliers para ambos grupos. De igual forma se aplica la prueba de Mann-Whitney-Wilcoxon bajo las siguientes hipótesis: H0: No hay diferencias en el tiempo (meses) que el ocupado estuvo sin empleo entre su trabajo actual y el anterior entre formales e informales. H1: Existen diferencias en el tiempo (meses) que el ocupado estuvo sin empleo entre su trabajo actual y el anterior entre formales e informales.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">mannwhitneyu</span>
+
+
+<span class="n">datos_limpios</span> <span class="o">=</span> <span class="n">datos2</span><span class="p">[[</span><span class="s2">&quot;formalidad&quot;</span><span class="p">,</span> <span class="s2">&quot;Meses que estuvo sin empleo entre su trabajo actual y el anterior&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">datos_limpios</span><span class="p">[</span><span class="s2">&quot;formalidad&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">datos_limpios</span><span class="p">[</span><span class="s2">&quot;formalidad&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+
+
+<span class="n">grupo_informal</span> <span class="o">=</span> <span class="n">datos_limpios</span><span class="p">[</span><span class="n">datos_limpios</span><span class="p">[</span><span class="s2">&quot;formalidad&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">][</span><span class="s2">&quot;Meses que estuvo sin empleo entre su trabajo actual y el anterior&quot;</span><span class="p">]</span>
+<span class="n">grupo_formal</span> <span class="o">=</span> <span class="n">datos_limpios</span><span class="p">[</span><span class="n">datos_limpios</span><span class="p">[</span><span class="s2">&quot;formalidad&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">][</span><span class="s2">&quot;Meses que estuvo sin empleo entre su trabajo actual y el anterior&quot;</span><span class="p">]</span>
+
+
+<span class="n">stat</span><span class="p">,</span> <span class="n">p_value</span> <span class="o">=</span> <span class="n">mannwhitneyu</span><span class="p">(</span><span class="n">grupo_informal</span><span class="p">,</span> <span class="n">grupo_formal</span><span class="p">,</span> <span class="n">alternative</span><span class="o">=</span><span class="s1">&#39;two-sided&#39;</span><span class="p">)</span>
+
+<span class="c1"># Mostrar resultados</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Estadístico de prueba: </span><span class="si">{</span><span class="n">stat</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Valor p: </span><span class="si">{</span><span class="n">p_value</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>[1 0]
+int64
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Estadístico de prueba: 16472838191.5000
+Valor p: 0.0000
+</pre></div>
+</div>
+</div>
+</div>
+<p>p-value: 2.2e-16. Con un p-valor menor al nivel de significancia se puede rechazar la hipótesis nula y afirmar que hay suficiente evidencia estadística para concluir que existen diferencias entre el tiempo mediano que el trabajador estuvo sin empleo entre su anterior trabajo y el actual al comparar ambos grupos.</p>
+</section>
+<section id="matriz-de-correlacion">
+<h2>Matriz de correlación<a class="headerlink" href="#matriz-de-correlacion" title="Link to this heading">#</a></h2>
+<p>Al realizar análisis de correlación entre las variables númericas se observa que la mayoría de los coeficientes son cercanos a cero, lo que indica ausencia de correlación entre ellas. Sin embargo, algo distinto a esto se presenta entre las variables edad y meses de trabajo continuo en el empleo y número de cuartos y total de personas en el hogar. Se evalúa el factor de inflación de varianza más adelante para descartar multicolinealidad.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">seaborn</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sns</span>
+
+<span class="c1"># Suponiendo que tu DataFrame se llama &#39;datos&#39;</span>
+<span class="c1"># Extraer solo columnas numéricas por índice (emulando datos[[16]], etc.)</span>
+
+<span class="c1"># Asegúrate de que estos índices existan en tu DataFrame (Python es 0-indexed)</span>
+<span class="n">numericas</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span>
+    <span class="s2">&quot;Edad&quot;</span><span class="p">:</span> <span class="n">datos</span><span class="p">[</span><span class="s2">&quot;Edad&quot;</span><span class="p">],</span>
+    <span class="s2">&quot;Meses_trabajo_continuo&quot;</span><span class="p">:</span> <span class="n">datos</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">15</span><span class="p">],</span>
+    <span class="s2">&quot;Meses_sin_empleo&quot;</span><span class="p">:</span> <span class="n">datos</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">18</span><span class="p">],</span>
+    <span class="s2">&quot;Tiempo_desplazamiento&quot;</span><span class="p">:</span> <span class="n">datos</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">19</span><span class="p">],</span>
+    <span class="s2">&quot;Numero_hogares&quot;</span><span class="p">:</span> <span class="n">datos</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">26</span><span class="p">],</span>
+    <span class="s2">&quot;Numero_cuartos&quot;</span><span class="p">:</span> <span class="n">datos</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">27</span><span class="p">],</span>
+    <span class="s2">&quot;Total_personas_hogar&quot;</span><span class="p">:</span> <span class="n">datos</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:,</span> <span class="mi">29</span><span class="p">]</span>
+<span class="p">})</span>
+
+
+<span class="c1"># Eliminar filas con datos faltantes</span>
+<span class="n">numericas</span> <span class="o">=</span> <span class="n">numericas</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+<span class="n">numericas</span> <span class="o">=</span> <span class="n">numericas</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">to_numeric</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;coerce&#39;</span><span class="p">)</span>
+<span class="n">matriz_cor</span> <span class="o">=</span> <span class="n">numericas</span><span class="o">.</span><span class="n">corr</span><span class="p">()</span>
+
+<span class="c1"># Visualizar con heatmap de seaborn (parecido a corrplot)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">sns</span><span class="o">.</span><span class="n">heatmap</span><span class="p">(</span><span class="n">matriz_cor</span><span class="p">,</span> <span class="n">annot</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;coolwarm&#39;</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;.2f&quot;</span><span class="p">,</span> 
+            <span class="n">square</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">linewidths</span><span class="o">=</span><span class="mf">.5</span><span class="p">,</span> <span class="n">cbar_kws</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;shrink&quot;</span><span class="p">:</span> <span class="mf">.5</span><span class="p">})</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s2">&quot;Matriz de correlación entre variables numéricas&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">rotation</span><span class="o">=</span><span class="mi">45</span><span class="p">,</span> <span class="n">ha</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>/Applications/miniconda3/envs/ml_venve/lib/python3.10/site-packages/seaborn/matrix.py:260: FutureWarning: Format strings passed to MaskedConstant are ignored, but in future may error or produce different behavior
+  annotation = (&quot;{:&quot; + self.fmt + &quot;}&quot;).format(val)
+</pre></div>
+</div>
+<img alt="_images/356899002d48b82c4e65d8664df799ad3dcb6b2247407068a68dfa337f23caf4.png" src="_images/356899002d48b82c4e65d8664df799ad3dcb6b2247407068a68dfa337f23caf4.png" />
+</div>
+</div>
+</section>
+<section id="manejo-de-datos-atipicos">
+<h2>Manejo de datos atípicos<a class="headerlink" href="#manejo-de-datos-atipicos" title="Link to this heading">#</a></h2>
+<p>Al analizar los outliers se encuentra que hay variables que tienen una gran presencia de datos atípicos dentro del conjunto de datos como es el caso del tiempo en meses que demoró un ocupado sin empleo entre su ocupación actual y la anterior, o como la variable ingresos laborales que cuenta con 32.306 observaciones atípicas (ver la siguiente tabla). Esto se pudo evidenciar por medio de los gráfico de boxplot mostrados anteriormente.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">detectar_outliers</span><span class="p">(</span><span class="n">columna</span><span class="p">):</span>
+    <span class="n">q1</span> <span class="o">=</span> <span class="n">columna</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span>
+    <span class="n">q3</span> <span class="o">=</span> <span class="n">columna</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="mf">0.75</span><span class="p">)</span>
+    <span class="n">iqr</span> <span class="o">=</span> <span class="n">q3</span> <span class="o">-</span> <span class="n">q1</span>
+    <span class="n">limite_inferior</span> <span class="o">=</span> <span class="n">q1</span> <span class="o">-</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">iqr</span>
+    <span class="n">limite_superior</span> <span class="o">=</span> <span class="n">q3</span> <span class="o">+</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">iqr</span>
+    <span class="k">return</span> <span class="n">columna</span><span class="p">[(</span><span class="n">columna</span> <span class="o">&lt;</span> <span class="n">limite_inferior</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">columna</span> <span class="o">&gt;</span> <span class="n">limite_superior</span><span class="p">)]</span>
+
+<span class="c1"># Aplicar a todas las columnas numéricas</span>
+<span class="n">outliers</span> <span class="o">=</span> <span class="p">{</span><span class="n">col</span><span class="p">:</span> <span class="n">detectar_outliers</span><span class="p">(</span><span class="n">numericas</span><span class="p">[</span><span class="n">col</span><span class="p">])</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">numericas</span><span class="o">.</span><span class="n">columns</span><span class="p">}</span>
+
+<span class="c1"># Resumen: número de outliers por variable</span>
+<span class="n">outliers_summary</span> <span class="o">=</span> <span class="p">{</span><span class="n">col</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span> <span class="k">for</span> <span class="n">col</span><span class="p">,</span> <span class="n">vals</span> <span class="ow">in</span> <span class="n">outliers</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+<span class="c1"># Convertir a DataFrame para verlo ordenado</span>
+<span class="n">outliers_summary_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">outliers_summary</span><span class="p">,</span> <span class="n">orient</span><span class="o">=</span><span class="s1">&#39;index&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;Cantidad_outliers&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;Cantidad_outliers&#39;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">outliers_summary_df</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>                        Cantidad_outliers
+Meses_sin_empleo                    25971
+Edad                                  175
+Meses_trabajo_continuo                  0
+Tiempo_desplazamiento                   0
+Numero_hogares                          0
+Numero_cuartos                          0
+Total_personas_hogar                    0
+</pre></div>
+</div>
+</div>
+</div>
+<p>Para el tratamiento de datos atípicos se recurre a la “winsorización”, que consiste en reem plazar el dato atípico con el valor más cercano que no es un dato anómalo. Este método fue útil para la investigación de Szántó (2023) dado que mejoró el rendimiento de su modelo propuesto para la predicción de riesgo de incumplimiento crediticio por parte de usuarios.</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">datos_windsor</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s2">&quot;/Users/macbook/Downloads/datos_winsor.csv&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 </div>
 </section>
@@ -1017,6 +1170,8 @@ Existe una diferencia estadísticamente significativa en la distribución de la 
     <ul class="visible nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#porcentaje-de-variables-con-datos-faltantes">Porcentaje de variables con datos faltantes</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calcular-porcentaje-de-informalidad-por-area">Calcular porcentaje de informalidad por AREA</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#matriz-de-correlacion">Matriz de correlación</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#manejo-de-datos-atipicos">Manejo de datos atípicos</a></li>
 </ul>
   </nav></div>
 
